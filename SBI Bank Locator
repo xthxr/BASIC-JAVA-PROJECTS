@@ -1,0 +1,116 @@
+import java.io.*;  
+public class Banking  
+{  
+    void printall(String m[][],int a,int b,int lines,int sl)
+    {
+        System.out.println("Sl.No\tBANK\tIFSC\t\tMICR CODE\tBRANCH\tCITY\tDIST\tSTATE");
+        int i,j;
+        for(i=a;i<=b;i++)
+        {
+            System.out.print(sl++ +"\t");
+            for(j=0;j<7;j++)
+            {
+                if(j>=3 && j<=5)
+                    System.out.print(m[i][j].substring(0,3)+"\t");                
+                else
+                    System.out.print(m[i][j]+"\t");
+            }
+            System.out.println();
+        } 
+    }
+
+    void search(String m[][],int pos,String ifsc)
+    {
+        int i,flag=0;
+        for(i=1;i<pos;i++)
+        {
+            if(ifsc.equals(m[i][1]))
+            {
+                flag=1;
+                break;
+            }
+        }
+        if(flag==1)
+        {
+            System.out.println("----------------------------------------------------------------");
+            System.out.println("Branch\t: " +m[i][3]);
+            System.out.println("City\t: "   +m[i][4]);
+            System.out.println("Dist\t: "   +m[i][5]);
+            System.out.println("State\t: "  +m[i][6]);
+        }
+        else
+            System.out.println("IFSC Code Not Exists.");
+    }
+
+    public static void main(String[] args) throws Exception  
+    {  
+        Banking ob=new Banking();
+        int i,j,lines=0,pos=0,c=0;
+        try
+        {
+            BufferedReader x = new BufferedReader(new FileReader("bank.csv"));
+            while(x.readLine() != null) 
+                lines++;
+            String s[]=new String[lines];
+            String m[][]=new String[lines][7];
+            BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+            BufferedReader reader = new BufferedReader(new FileReader("bank.csv"));
+            BufferedReader r = new BufferedReader(new FileReader("bank.csv"));
+            while(reader.readLine()!=null) 
+                s[pos++]=r.readLine();
+            for(i=0;i<pos;i++)
+            {
+                String str=s[i];
+                m[i]=str.split(",");
+            }
+
+            System.out.println("Total Available Records="+lines);
+            System.out.println("----------------------------------------------------------------");  
+
+            do
+            {
+                int correct=1;
+                do
+                {                   
+                    try
+                    {
+                        correct=1;
+                        System.out.print("1. Print List\t2. Search\t3. Others to Exit\nEnter Your Choice: ");
+                        c=Integer.parseInt(br.readLine());
+                        switch(c)
+                        {
+                            case 1:
+                            int beg=1,end=30,ans=0,sl=1;
+                            ob.printall(m,beg,end,lines,sl);
+                            do
+                            {
+                                System.out.print("Press 1 to Continue: ");
+                                ans=Integer.parseInt(br.readLine());
+                                if(ans==1)
+                                {
+                                    beg=beg+30; end=end+30;
+                                    ob.printall(m,beg,end,lines,sl+=30);
+                                }
+                            }while(ans==1);
+                            break;
+                            case 2: System.out.print("Enter IFSC Code to Search Bank Details: ");
+                            String ifsc=br.readLine();
+                            ob.search(m,pos,ifsc);
+                            break;
+                            default: System.exit(0);
+                        }
+                    }
+                    catch(Exception ex)
+                    {
+                        correct=0;
+                        System.out.println(ex);
+                    }  
+                }while(correct==0);
+            }while(c>=1 && c<=2);            
+        }
+        catch(IOException e) 
+        {
+            System.out.println(e);
+        }
+    }  
+}
